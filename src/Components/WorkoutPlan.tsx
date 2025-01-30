@@ -63,7 +63,7 @@ const WorkoutPlan: React.FC = () => {
   const generatePlan = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKENDURL}/api/tplans/generate/`,
+        `${import.meta.env.VITE_BACKENDURL}/api/workout_plans/generate/`,
         { experience, goal },
         { headers: getAuthHeaders() }
       );
@@ -82,7 +82,7 @@ const WorkoutPlan: React.FC = () => {
 
   const saveCustomPlan = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_BACKENDURL}/api/tplans/`, customPlan, {
+      await axios.post(`${import.meta.env.VITE_BACKENDURL}/api/workout_plans/`, customPlan, {
         headers: getAuthHeaders(),
       });
       alert('Eigener Plan gespeichert!');

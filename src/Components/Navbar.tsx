@@ -72,7 +72,6 @@ const Navbar: React.FC = () => {
           {isProfileOpen && (
             <div className="profile-dropdown">
               <a href="/profile">Profil</a>
-              <a href="/settings">Einstellungen</a>
               <button className="logout-btn" onClick={handleLogout}>
                 <FaSignOutAlt /> Log out
               </button>
