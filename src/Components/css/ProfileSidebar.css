@@ -1,0 +1,110 @@
+/* Profile.css */
+.profile-container {
+   display: flex;
+   height: 100vh;
+   overflow: hidden;
+ }
+ 
+ .profile-sidebar {
+   width: 250px;
+   background-color: #333;
+   height: 100%;
+   padding: 20px;
+   color: white;
+   box-shadow: 2px 0 5px rgba(253, 253, 253, 0.1);
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+   transition: width 0.3s ease;
+   z-index: 1; /* Ensure the sidebar is on top of the profile content */
+ }
+ 
+ .profile-sidebar--collapsed {
+   width: 40px; /* Adjust width as required to keep icons visible */
+ }
+ 
+ .collapse-button {
+   background: none;
+   border: none;
+   color: white;
+   font-size: 1.5rem;
+   margin-bottom: 20px;
+   cursor: pointer;
+   align-self: flex-end;
+ }
+ 
+ .menu-title {
+   margin-bottom: 20px;
+   transition: opacity 0.3s ease;
+ }
+ 
+ .profile-sidebar--collapsed .menu-title {
+   opacity: 0; /* Hide text when collapsed */
+   pointer-events: none; /* Ensure no invisible elements block interaction */
+ }
+ 
+ .profile-sidebar ul {
+   list-style-type: none;
+   padding: 0;
+   width: 100%;
+ }
+ 
+ .profile-sidebar li {
+   padding: 10px 0;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   transition: background-color 0.3s, padding-left 0.3s;
+ }
+ 
+ .profile-sidebar--collapsed li {
+   padding-left: 10px; /* Reduce padding for reduced width */
+ }
+ 
+ .profile-sidebar li:hover {
+   background-color: #444;
+ }
+ 
+ .menu-text {
+   margin-left: 10px;
+   transition: opacity 0.3s ease;
+ }
+ 
+ .profile-sidebar--collapsed .menu-text {
+   opacity: 0; /* Hide text when collapsed */
+   pointer-events: none;
+ }
+ 
+ .profile-content {
+   flex-grow: 1;
+   padding: 20px;
+   overflow-y: auto;
+ }
+ 
+ .back-button {
+   background-color: #333;
+   color: white;
+   border: none;
+   padding: 10px 20px;
+   cursor: pointer;
+   margin-top: 20px;
+ }
+ 
+ /* Responsive adjustments if needed */
+ @media (max-width: 768px) {
+   .profile-sidebar {
+     width: 200px;
+   }
+   .profile-sidebar--collapsed {
+     width: 60px; /* Adjust as necessary */
+   }
+ }
+ 
+ @media (max-width: 480px) {
+   .profile-sidebar {
+     display: none; /* Or adapt based on UX needs */
+   }
+   .profile-content {
+     padding: 10px;
+   }
+ }

@@ -1,0 +1,149 @@
+/* Navbar styling */
+.navbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px 20px;
+   background-color: #333;
+   color: white;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   z-index: 1000;
+ }
+ 
+ .navbar-left {
+   display: flex;
+   align-items: center;
+ }
+ 
+ .navbar-logo {
+   font-size: 1.5rem;
+   color: white;
+   text-decoration: none;
+   margin-right: 20px;
+ }
+ 
+ .navbar-search {
+   display: flex;
+   align-items: center;
+   background-color: #555;
+   padding: 5px;
+   border-radius: 4px;
+ }
+ 
+ .navbar-search input {
+   background-color: transparent;
+   border: none;
+   color: white;
+   outline: none;
+   padding: 5px;
+ }
+ 
+ .search-btn {
+   background: none;
+   border: none;
+   color: white;
+   cursor: pointer;
+ }
+ 
+ .navbar-right {
+   display: flex;
+   align-items: center;
+   padding-right: 20px;
+ }
+ 
+ .navbar-icon {
+   font-size: 1.5rem;
+   margin: 0 10px;
+   cursor: pointer;
+ }
+ 
+ .navbar-profile {
+   position: relative;
+ }
+ 
+ .profile-dropdown {
+   position: absolute;
+   right: 0;
+   top: 100%;
+   background-color: #444;
+   color: white;
+   border-radius: 4px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+   overflow: hidden;
+   display: flex;
+   flex-direction: column;
+   min-width: 150px;
+ }
+ 
+ .profile-dropdown a,
+ .logout-btn {
+   padding: 10px;
+   color: white;
+   text-decoration: none;
+   background: none;
+   border: none;
+   width: 100%;
+   text-align: left;
+   cursor: pointer;
+ }
+ 
+ .profile-dropdown a:hover,
+ .logout-btn:hover {
+   background-color: #555;
+ }
+ 
+ /* Responsive adjustments */
+ @media (max-width: 768px) {
+   .navbar {
+     flex-direction: column;
+     align-items: flex-start;
+     padding: 10px;
+   }
+ 
+   .navbar-left {
+     width: 100%;
+     justify-content: space-between;
+   }
+ 
+   .navbar-logo {
+     font-size: 1.3rem;
+   }
+ 
+   .navbar-search {
+     width: 100%;
+     margin-top: 5px;
+   }
+ 
+   .navbar-search input {
+     width: 100%;
+   }
+ 
+   .navbar-right {
+     margin-top: 10px;
+     width: 100%;
+     justify-content: flex-start;
+   }
+ 
+   .profile-dropdown {
+     right: auto;
+     left: 0;
+   }
+ }
+ 
+ @media (max-width: 480px) {
+   .navbar-search input {
+     display: none; /* Hide the search input on very small screens */
+   }
+ 
+   .navbar-search .search-btn {
+     padding: 0;
+   }
+ }
+ 
+ body {
+   padding-top: 60px; /* Adjust this to offset the fixed navbar */
+ }
+ 

@@ -1,0 +1,9 @@
+.dietary-options {
+   flex: 1;
+   margin: 20px;
+   padding: 20px;
+   background-color: #f4f4f4;
+   border-radius: 8px;
+   color: #333;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ }

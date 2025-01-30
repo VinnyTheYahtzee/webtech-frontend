@@ -1,0 +1,36 @@
+css
+.footer-container {
+  background-color: #f9f9f9;
+  border-top: 1px solid #eaeaea;
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  padding-bottom: 10px; 
+}
+
+.footer-content p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.footer-nav {
+  margin-top: 10px;
+}
+
+.footer-nav a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 14px;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}

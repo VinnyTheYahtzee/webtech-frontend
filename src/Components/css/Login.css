@@ -1,0 +1,96 @@
+/* Center login container and add basic styling */
+.login-container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+   max-width: 400px;
+   margin: auto;
+   padding: 20px;
+   border: 1px solid #ccc;
+   border-radius: 8px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+   background-color: #f9f9f9;
+ }
+ 
+ .login-title {
+   font-size: 1.8rem;
+   margin-bottom: 20px;
+   color: #333;
+ }
+ 
+ .login-form {
+   width: 100%;
+ }
+ 
+ .form-group {
+   display: flex;
+   flex-direction: column;
+   margin-bottom: 15px;
+ }
+ 
+ .form-group label {
+   margin-bottom: 5px;
+   color: #666;
+   font-weight: bold;
+ }
+ 
+ .form-group input {
+   padding: 10px;
+   font-size: 1rem;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+ }
+ 
+ .login-button {
+   width: 100%;
+   padding: 10px;
+   background-color: #007bff;
+   color: #fff;
+   border: none;
+   border-radius: 4px;
+   font-size: 1rem;
+   cursor: pointer;
+   transition: background-color 0.3s;
+ }
+ 
+ .login-button:hover {
+   background-color: #0056b3;
+ }
+ 
+ .login-actions {
+   display: flex;
+   justify-content: space-between;
+   width: 100%;
+   margin-top: 15px;
+ }
+ 
+ .register-button, .anonymous-button {
+   padding: 10px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 0.9rem;
+ }
+ 
+ .register-button {
+   background-color: #28a745;
+   color: #fff;
+   transition: background-color 0.3s;
+ }
+ 
+ .register-button:hover {
+   background-color: #218838;
+ }
+ 
+ .anonymous-button {
+   background-color: #6c757d;
+   color: #fff;
+   transition: background-color 0.3s;
+ }
+ 
+ .anonymous-button:hover {
+   background-color: #5a6268;
+ }
+ 
