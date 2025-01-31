@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+// Contact.tsx
+
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './css/Contact.css';  // Ensure this path is correct
+import ReCAPTCHA from 'react-google-recaptcha'; 
+import './css/Contact.css'; 
 
 interface ContactFormProps {
   maxMessageLength?: number; 
-  // Optional prop to allow easy changes or a default
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => {
@@ -13,7 +15,16 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null); // State to store reCAPTCHA token
+  const recaptchaRef = useRef<ReCAPTCHA>(null); // Ref to reset reCAPTCHA if needed
   const navigate = useNavigate(); // Hook for navigation
+
+  const handleRecaptchaChange = (token: string | null) => {
+    setRecaptchaToken(token);
+    if (token) {
+      setError(null); // Clear error if reCAPTCHA is successful
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +41,18 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
       return;
     }
 
+    if (!recaptchaToken) {
+      setError('Bitte bestätigen Sie, dass Sie kein Roboter sind.');
+      return;
+    }
+
     setError(null);
 
     const contactData = {
       name,
       email,
       message,
+      recaptcha_token: recaptchaToken, // Include the reCAPTCHA token
     };
 
     try {
@@ -55,6 +72,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
         setName('');
         setEmail('');
         setMessage('');
+        setRecaptchaToken(null);
+        recaptchaRef.current?.reset(); // Reset reCAPTCHA
       } else {
         alert('Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.');
       }
@@ -87,7 +106,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
               onChange={(e) => setName(e.target.value)}
               required
               maxLength={60} 
-              // Optional: limit name length
             />
           </div>
 
@@ -100,7 +118,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              // Optional: pattern for extra validation
               pattern="^\S+@\S+\.\S+$"
             />
           </div>
@@ -113,13 +130,23 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
-              maxLength={maxMessageLength} // Enforce length on the textarea
+              maxLength={maxMessageLength}
               rows={6}
             />
             {/* Character counter */}
             <small>
               {message.length}/{maxMessageLength} Zeichen
             </small>
+          </div>
+
+          {/* reCAPTCHA Widget */}
+          <div className="form-group">
+          <ReCAPTCHA
+  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY as string}
+  onChange={handleRecaptchaChange}
+  ref={recaptchaRef}
+/>
+
           </div>
 
           <button type="submit" className="send-button">Senden</button>
