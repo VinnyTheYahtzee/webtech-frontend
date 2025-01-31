@@ -39,8 +39,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ maxMessageLength = 500 }) => 
     };
 
     try {
-      const response = await axios.post(
-        'http://localhost:8000/api/contact/contactform/',
+      const response = await axios.post(`${import.meta.env.VITE_BACKENDURL}/api/contact/contactform/`,
         contactData,
         {
           headers: {
