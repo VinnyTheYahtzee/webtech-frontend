@@ -68,7 +68,7 @@ const WorkoutPlan: React.FC = () => {
         { headers: getAuthHeaders() }
       );
   
-      console.log("Generated Plan Response:", response.data);  // ✅ Log the response
+      console.log("Generated Plan Response:", response.data); // ✅ Debug response
   
       if (response.data && typeof response.data === 'object') {
         if (!response.data.exercises) {
@@ -76,14 +76,15 @@ const WorkoutPlan: React.FC = () => {
         }
         setAutoPlan(response.data);
       } else {
-        console.error('Invalid response format:', response.data);
+        console.error("Invalid response format:", response.data);
         setAutoPlan(null);
       }
     } catch (error) {
-      console.error('Error generating plan:', error);
+      console.error("Error generating plan:", error);
       setAutoPlan(null);
     }
   };
+  
 
   const saveCustomPlan = async () => {
     try {
