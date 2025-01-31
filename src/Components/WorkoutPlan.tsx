@@ -9,6 +9,7 @@ interface Exercise {
 }
 
 interface WorkoutExercise {
+  id?: number;
   exercise: Exercise;
   sets: number;
   reps: number;
@@ -25,11 +26,16 @@ interface WorkoutPlan {
 }
 
 // Define interfaces for API responses
-interface APIWorkoutExercise {
-  exercise_id: number;
-  exercise_name: string;
+interface APIExercise {
+  id: number;
+  name: string;
   muscle_group: string;
   equipment: string;
+}
+
+interface APIWorkoutExercise {
+  id: number;
+  exercise: APIExercise;
   sets: number;
   reps: number;
   rest?: number;
@@ -101,37 +107,46 @@ const WorkoutPlanComponent: React.FC = () => {
     }));
   };
 
+  const handleRemoveExercise = (index: number) => {
+    setCustomPlan((prevPlan) => ({
+      ...prevPlan,
+      exercises: prevPlan.exercises.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleExerciseChange = (index: number, field: 'sets' | 'reps' | 'rest', value: number) => {
+    setCustomPlan((prevPlan) => {
+      const updatedExercises = [...prevPlan.exercises];
+      updatedExercises[index] = { ...updatedExercises[index], [field]: value };
+      return { ...prevPlan, exercises: updatedExercises };
+    });
+  };
+
   const generatePlan = async () => {
     try {
       const response = await axios.post<APIWorkoutPlanResponse>(
         `${import.meta.env.VITE_BACKENDURL}/api/workout_plans/generate/`,
-        { experience_level: experience, goal }, // Ensure the key matches backend expectation
+        { experience_level: experience, goal },
         { headers: getAuthHeaders() }
       );
 
       console.log('Generated Plan Response:', response.data); // ✅ Debug response
 
       if (response.data && typeof response.data === 'object') {
-        // Transform the API response to match WorkoutPlan interface
+        // Directly use the serialized data as it matches the WorkoutPlan interface
         const transformedPlan: WorkoutPlan = {
           id: response.data.id,
           name: response.data.name,
           goal: response.data.goal,
           experience_level: response.data.experience_level,
           created_at: response.data.created_at,
-          exercises: Array.isArray(response.data.exercises)
-            ? response.data.exercises.map((ex: APIWorkoutExercise) => ({
-                exercise: {
-                  id: ex.exercise_id,
-                  name: ex.exercise_name,
-                  muscle_group: ex.muscle_group,
-                  equipment: ex.equipment,
-                },
-                sets: ex.sets,
-                reps: ex.reps,
-                rest: ex.rest || 60, // Default rest if not provided
-              }))
-            : [],
+          exercises: response.data.exercises.map((ex: APIWorkoutExercise) => ({
+            id: ex.id,
+            exercise: ex.exercise, // Directly assign the exercise object
+            sets: ex.sets,
+            reps: ex.reps,
+            rest: ex.rest || 60, // Default rest if not provided
+          })),
         };
 
         if (!transformedPlan.exercises.length) {
@@ -194,8 +209,8 @@ const WorkoutPlanComponent: React.FC = () => {
             <div className="plan-display">
               <h4>{autoPlan.name}</h4>
               <ul>
-                {autoPlan.exercises.map((ex, index) => (
-                  <li key={index}>
+                {autoPlan.exercises.map((ex) => (
+                  <li key={ex.id}>
                     {ex.exercise.name} - {ex.sets}x{ex.reps} (Rest: {ex.rest}s)
                   </li>
                 ))}
@@ -255,8 +270,27 @@ const WorkoutPlanComponent: React.FC = () => {
           <h4>Ausgewählte Übungen</h4>
           <ul>
             {customPlan.exercises.map((ex, index) => (
-              <li key={index}>
-                {ex.exercise.name} - {ex.sets} Sätze, {ex.reps} Wiederholungen (Pause: {ex.rest}s)
+              <li key={ex.id || index}>
+                {ex.exercise.name} - 
+                <input
+                  type="number"
+                  value={ex.sets}
+                  onChange={(e) => handleExerciseChange(index, 'sets', parseInt(e.target.value))}
+                  min="1"
+                /> Sets,
+                <input
+                  type="number"
+                  value={ex.reps}
+                  onChange={(e) => handleExerciseChange(index, 'reps', parseInt(e.target.value))}
+                  min="1"
+                /> Reps,
+                <input
+                  type="number"
+                  value={ex.rest}
+                  onChange={(e) => handleExerciseChange(index, 'rest', parseInt(e.target.value))}
+                  min="0"
+                /> Rest (s)
+                <button onClick={() => handleRemoveExercise(index)}>Remove</button>
               </li>
             ))}
           </ul>
