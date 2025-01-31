@@ -8,15 +8,50 @@ interface Exercise {
   equipment: string;
 }
 
+interface WorkoutExercise {
+  exercise: Exercise;
+  sets: number;
+  reps: number;
+  rest: number;
+}
+
 interface WorkoutPlan {
   id?: number;
   name: string;
-  exercises: { exercise: Exercise; sets: number; reps: number; rest: number }[];
+  goal: string;
+  experience_level: string;
+  created_at?: string;
+  exercises: WorkoutExercise[];
 }
 
-const WorkoutPlan: React.FC = () => {
+// Define interfaces for API responses
+interface APIWorkoutExercise {
+  exercise_id: number;
+  exercise_name: string;
+  muscle_group: string;
+  equipment: string;
+  sets: number;
+  reps: number;
+  rest?: number;
+}
+
+interface APIWorkoutPlanResponse {
+  id: number;
+  name: string;
+  goal: string;
+  experience_level: string;
+  created_at: string;
+  exercises: APIWorkoutExercise[];
+}
+
+const WorkoutPlanComponent: React.FC = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [customPlan, setCustomPlan] = useState<WorkoutPlan>({ name: '', exercises: [] });
+  const [customPlan, setCustomPlan] = useState<WorkoutPlan>({
+    name: '',
+    goal: 'Muskelaufbau', // Set default goal
+    experience_level: 'Beginner', // Set default experience_level
+    exercises: [],
+  });
   const [autoPlan, setAutoPlan] = useState<WorkoutPlan | null>(null);
   const [experience, setExperience] = useState('Beginner');
   const [goal, setGoal] = useState('Muskelaufbau');
@@ -32,15 +67,18 @@ const WorkoutPlan: React.FC = () => {
 
   const fetchExercises = useCallback(async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKENDURL}/api/exercises/`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await axios.get<Exercise[]>(
+        `${import.meta.env.VITE_BACKENDURL}/api/exercises/`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
 
       // ✅ Ensure the response is an array, else default to []
       if (Array.isArray(response.data)) {
         setExercises(response.data);
       } else {
-        console.error("Unexpected API response:", response.data);
+        console.error('Unexpected API response:', response.data);
         setExercises([]); // Prevents errors if data format is incorrect
       }
     } catch (error) {
@@ -56,35 +94,60 @@ const WorkoutPlan: React.FC = () => {
   const handleAddExercise = (exercise: Exercise) => {
     setCustomPlan((prevPlan) => ({
       ...prevPlan,
-      exercises: [...prevPlan.exercises, { exercise, sets: 3, reps: 10, rest: 60 }],
+      exercises: [
+        ...prevPlan.exercises,
+        { exercise, sets: 3, reps: 10, rest: 60 },
+      ],
     }));
   };
 
   const generatePlan = async () => {
     try {
-      const response = await axios.post(
+      const response = await axios.post<APIWorkoutPlanResponse>(
         `${import.meta.env.VITE_BACKENDURL}/api/workout_plans/generate/`,
-        { experience, goal },
+        { experience_level: experience, goal }, // Ensure the key matches backend expectation
         { headers: getAuthHeaders() }
       );
-  
-      console.log("Generated Plan Response:", response.data); // ✅ Debug response
-  
+
+      console.log('Generated Plan Response:', response.data); // ✅ Debug response
+
       if (response.data && typeof response.data === 'object') {
-        if (!response.data.exercises) {
-          console.warn("⚠️ Warning: 'exercises' is missing in response!", response.data);
+        // Transform the API response to match WorkoutPlan interface
+        const transformedPlan: WorkoutPlan = {
+          id: response.data.id,
+          name: response.data.name,
+          goal: response.data.goal,
+          experience_level: response.data.experience_level,
+          created_at: response.data.created_at,
+          exercises: Array.isArray(response.data.exercises)
+            ? response.data.exercises.map((ex: APIWorkoutExercise) => ({
+                exercise: {
+                  id: ex.exercise_id,
+                  name: ex.exercise_name,
+                  muscle_group: ex.muscle_group,
+                  equipment: ex.equipment,
+                },
+                sets: ex.sets,
+                reps: ex.reps,
+                rest: ex.rest || 60, // Default rest if not provided
+              }))
+            : [],
+        };
+
+        if (!transformedPlan.exercises.length) {
+          console.warn("⚠️ Warning: 'exercises' is missing or empty in response!", response.data);
         }
-        setAutoPlan(response.data);
+
+        setAutoPlan(transformedPlan);
       } else {
-        console.error("Invalid response format:", response.data);
+        console.error('Invalid response format:', response.data);
         setAutoPlan(null);
       }
     } catch (error) {
-      console.error("Error generating plan:", error);
+      console.error('Error generating plan:', error);
       setAutoPlan(null);
     }
   };
-  
 
   const saveCustomPlan = async () => {
     try {
@@ -92,8 +155,16 @@ const WorkoutPlan: React.FC = () => {
         headers: getAuthHeaders(),
       });
       alert('Eigener Plan gespeichert!');
+      // Optionally, reset the custom plan
+      setCustomPlan({
+        name: '',
+        goal: 'Muskelaufbau',
+        experience_level: 'Beginner',
+        exercises: [],
+      });
     } catch (error) {
       console.error('Error saving custom plan:', error);
+      alert('Fehler beim Speichern des Plans.');
     }
   };
 
@@ -106,16 +177,16 @@ const WorkoutPlan: React.FC = () => {
           <label>
             Trainingserfahrung:
             <select value={experience} onChange={(e) => setExperience(e.target.value)}>
-              <option>Beginner</option>
-              <option>Fortgeschritten</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Fortgeschritten">Fortgeschritten</option>
             </select>
           </label>
           <label>
             Ziel:
             <select value={goal} onChange={(e) => setGoal(e.target.value)}>
-              <option>Muskelaufbau</option>
-              <option>Fettverlust</option>
-              <option>Stärke</option>
+              <option value="Muskelaufbau">Muskelaufbau</option>
+              <option value="Fettverlust">Fettverlust</option>
+              <option value="Stärke">Stärke</option>
             </select>
           </label>
           <button onClick={generatePlan}>Plan generieren</button>
@@ -125,7 +196,7 @@ const WorkoutPlan: React.FC = () => {
               <ul>
                 {autoPlan.exercises.map((ex, index) => (
                   <li key={index}>
-                    {ex.exercise.name} - {ex.sets}x{ex.reps}
+                    {ex.exercise.name} - {ex.sets}x{ex.reps} (Rest: {ex.rest}s)
                   </li>
                 ))}
               </ul>
@@ -139,8 +210,35 @@ const WorkoutPlan: React.FC = () => {
             type="text"
             placeholder="Name des Plans"
             value={customPlan.name}
-            onChange={(e) => setCustomPlan({ ...customPlan, name: e.target.value })}
+            onChange={(e) =>
+              setCustomPlan({ ...customPlan, name: e.target.value })
+            }
           />
+          <label>
+            Trainingserfahrung:
+            <select
+              value={customPlan.experience_level}
+              onChange={(e) =>
+                setCustomPlan({ ...customPlan, experience_level: e.target.value })
+              }
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Fortgeschritten">Fortgeschritten</option>
+            </select>
+          </label>
+          <label>
+            Ziel:
+            <select
+              value={customPlan.goal}
+              onChange={(e) =>
+                setCustomPlan({ ...customPlan, goal: e.target.value })
+              }
+            >
+              <option value="Muskelaufbau">Muskelaufbau</option>
+              <option value="Fettverlust">Fettverlust</option>
+              <option value="Stärke">Stärke</option>
+            </select>
+          </label>
           <h4>Verfügbare Übungen</h4>
           <ul>
             {exercises.length > 0 ? (
@@ -158,7 +256,7 @@ const WorkoutPlan: React.FC = () => {
           <ul>
             {customPlan.exercises.map((ex, index) => (
               <li key={index}>
-                {ex.exercise.name} - {ex.sets} sets, {ex.reps} reps
+                {ex.exercise.name} - {ex.sets} Sätze, {ex.reps} Wiederholungen (Pause: {ex.rest}s)
               </li>
             ))}
           </ul>
@@ -169,4 +267,4 @@ const WorkoutPlan: React.FC = () => {
   );
 };
 
-export default WorkoutPlan;
+export default WorkoutPlanComponent;
