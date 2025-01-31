@@ -104,8 +104,8 @@ const ChangePassword: React.FC = () => {
             value={deletePassword}
             onChange={(e) => setDeletePassword(e.target.value)}
           />
-          <button onClick={handleDeleteAccount}>Confirm Delete</button>
-          <button onClick={() => setShowDeleteModal(false)}>Cancel</button>
+          <button onClick={handleDeleteAccount}>Löschen bestätigen</button>
+          <button onClick={() => setShowDeleteModal(false)}>Abbrechen</button>
         </div>
       )}
 
