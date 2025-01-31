@@ -67,8 +67,13 @@ const WorkoutPlan: React.FC = () => {
         { experience, goal },
         { headers: getAuthHeaders() }
       );
-
+  
+      console.log("Generated Plan Response:", response.data);  // ✅ Log the response
+  
       if (response.data && typeof response.data === 'object') {
+        if (!response.data.exercises) {
+          console.warn("⚠️ Warning: 'exercises' is missing in response!", response.data);
+        }
         setAutoPlan(response.data);
       } else {
         console.error('Invalid response format:', response.data);
