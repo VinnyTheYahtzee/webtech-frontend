@@ -71,7 +71,7 @@ const ChangePassword: React.FC = () => {
 
   return (
     <div>
-      <h2>Change Password</h2>
+      <h2>Passwort Ändern</h2>
       <input
         type="password"
         placeholder="Altes Passwort"
@@ -92,7 +92,7 @@ const ChangePassword: React.FC = () => {
       />
       <button onClick={handleChangePassword}>Passwort Ändern</button>
 
-      <h2>Delete Profile</h2>
+      <h2>Profil löschen</h2>
       <button onClick={handleShowDeleteModal}>Account Löschen</button>
 
       {showDeleteModal && (
